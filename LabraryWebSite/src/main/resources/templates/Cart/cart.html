@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<!-- HEADER -->
+<div th:replace="~{layout :: header}"></div>
+<br>
+</body>
+<main>
+  <div class="container mt-5">
+    <h2>Cart</h2>
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+      <tr>
+        <th scope="col">Book Title</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="book : ${books}">
+        <td th:text="${book.title}"></td>
+        <td class="quantity-control">
+          <button class="btn btn-outline-secondary" onclick="changeQuantity(this, -1)">&lt;</button>
+          <input type="text" class="quantity-input" id="quantity" value="0" readonly>
+          <button class="btn btn-outline-secondary" onclick="changeQuantity(this, 1)">&gt;</button>
+        </td>
+        <td id="price" th:text="${book.price} + DH"></td>
+        <td>
+          <a th:href="@{/book/cart/{id}/remove(id=${book.id})}"><i class="bi bi-trash"></i></a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- Total Price (optional) -->
+    <div class="d-flex justify-content-end">
+      <h5>Total: <span id="totalPrice">0 DH</span></h5>
+    </div>
+  </div>
+</main>
+<div th:replace="~{layout :: footer}"></div>
+<script>
+
+
+  function changeQuantity(button, change) {
+    const quantityInput = button.parentElement.querySelector('.quantity-input');
+    let quantity = parseInt(quantityInput.value);
+    quantity = Math.max(0, quantity + change);  // Minimum quantity of 1
+    quantityInput.value = quantity;
+
+    // Optionally update total price here
+    updateTotalPrice();
+  }
+
+  function updateTotalPrice() {
+    let total = 0;
+    document.querySelectorAll('tbody tr').forEach(row => {
+      const price = parseFloat(row.cells[2].textContent.replace('DH', ''));
+      const quantity = parseInt(row.querySelector('.quantity-input').value);
+      total += price * quantity;
+    });
+    document.getElementById('totalPrice').textContent = `DH ${total.toFixed(2)}`;
+  }
+</script>
+</html>

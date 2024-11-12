@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap Website Demo</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+<body>
+<!-- HEADER -->
+<header class="d-flex gap-2 justify-content-center py-3">
+  <div class="ms-auto">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a th:href="@{/book}" class="nav-link active" aria-current="page">Home</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+      <li sec:authorize="isAuthenticated()" class="nav-item"><a  th:href="@{/logout}" class="nav-link">LOG OUT</a></li>
+      <li sec:authorize="!isAuthenticated()" class="nav-item"><a  th:href="@{/login}" class="nav-link">LOG IN</a></li>
+      <li sec:authorize="!isAuthenticated()" class="nav-item"><a  th:href="@{/register}" class="nav-link">REGISTER</a></li>
+    </ul>
+  </div>
+  <div class="ms-auto me-3">
+      <a class="btn btn-primary" th:href="@{/book/cart}">
+        <i class="bi bi-cart-fill"></i>
+        <span class="badge bg-light text-dark ms-1" th:text="${size}">0</span>
+      </a>
+  </div>
+</header>
+<br>
+
+<!-- alert -->
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>WELCOME!</strong> Successfully logged in.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+
+<!-- CAROUSEL-->
+<div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel" data-bs-theme="light">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2" class="active" aria-current="true"></button>
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3" class=""></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item">
+      <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+      <div class="container">
+        <div class="carousel-caption">
+          <h1>LIBRARY BOOKS</h1>
+          <p style="font-size: 20px;">Read book</p>
+
+        </div>
+
+      </div>
+    </div>
+    <div class="carousel-item active">
+      <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+      <div class="container">
+        <div class="carousel-caption">
+          <h1>DESIGN AND GET STARTED</h1>
+
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+      <div class="container">
+        <div class="carousel-caption text-end">
+          <p>E-library books are also available </p>
+          <p><a class="btn btn-lg btn-primary" href="#">Browse for more</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<br>
+
+<main th:insert="~{::content}"></main>
+<!-- footer -->
+<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top ">
+  <div class="col-md-6 d-flex align-items-center">
+    <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+      <svg class="bi" width="30" height="24">
+        <use xlink:href="#bootstrap"></use>
+      </svg>
+    </a>
+    <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Library Limited Company, Inc</span>
+    <span class="mb-3 mb-md-0 text-body-secondary ms-1">By oussama el bakri</span>
+  </div>
+
+  <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+    <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
+      <use xlink:href="#twitter"></use>
+    </svg></a></li>
+    <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
+      <use xlink:href="#instagram"></use>
+    </svg></a></li>
+    <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
+      <use xlink:href="#facebook"></use>
+    </svg></a></li>
+  </ul>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap JavaScript -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</footer>
+
+
+
+</body>
+</html>

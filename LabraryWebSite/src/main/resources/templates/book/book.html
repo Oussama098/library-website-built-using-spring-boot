@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <!-- HEADER -->
+    <div th:replace="~{layout :: header}"></div>
+    <br>
+    <div sec:authorize="isAuthenticated()" class="alert alert-success alert-dismissible fade show" role="alert" id="welcomeAlert">
+        <strong>WELCOME!</strong> Successfully logged in.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- CAROUSEL-->
+    <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel" data-bs-theme="light">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2" class="active" aria-current="true"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item">
+                <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>LIBRARY BOOKS</h1>
+                        <p style="font-size: 20px;">Read book</p>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="carousel-item active">
+                <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>LIBRARY</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <br>
+    <!--BADGES-->
+
+    <div class="d-flex gap-2 justify-content-center py-5" >
+        <div class="ms-auto">
+            <a th:href="@{/book}" style="text-decoration: none; color: inherit;">
+                <span class="badge text-bg-primary rounded-pill" >All</span>
+            </a>
+            <a th:each="category : ${category}" th:href="@{/book/{id}/category(id=${category.id})}"
+               style="text-decoration: none; color: inherit;">
+                <span class="badge text-bg-primary rounded-pill" th:text="${category.name}">Kids</span>
+            </a>
+        </div>
+        <div  class="ms-auto me-3">
+            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/book/new}" class="btn btn-dark btn-lg end-0">
+                <i class="bi bi-plus-circle"></i>
+            </a>
+        </div>
+    </div>
+
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" style="justify-content: center; margin-bottom: 20px;">
+        <div class="col" th:each="book : ${books}">
+            <div class="card shadow-sm"  >
+                <span th:if="${booksRec.contains(book)}" class="badge rounded-pill bg-success position-absolute top-0 start-100 translate-middle" style="z-index: 1;">New</span>
+                <img class="bd-placeholder-img card-img-top" width="25" height="300" th:src="@{${book.image}}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false" alt="">
+                <div class="card-body">
+                    <h4 th:text="${book.title}"></h4>
+                    <p class="card-text" th:text="${book.description.length() > 100 ? #strings.substring(book.description, 0, 100) + '...' : book.description}">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button type="button" data-toggle="modal" data-target="#detailBook" class="btn btn-sm btn-outline-secondary"  th:data-id="${book.id}"
+                                    th:data-price = "${book.price}"
+                                    th:data-isbn = "${book.isbn}"
+                                    th:data-category = "${book.category.name}"
+                                    th:data-quantity = "${book.quantity}"
+                                    th:data-title="${book.title}"
+                                    th:data-description="${book.description}"
+                                    th:data-image="${book.image}"
+                                    th:data-pages="${book.pages}"
+                                    onclick="showBookDetails(this)">OverView</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Read</button>
+                            <button sec:authorize="hasAuthority('ADMIN')" type="button" class="btn btn-sm btn-outline-secondary"><a th:href="@{/book/{id}/update(id=${book.id})}"  style="text-decoration: none; color: inherit;">Update</a></button>
+                            <button  sec:authorize="hasAuthority('ADMIN')" type="button"  class="btn btn-sm btn-outline-danger"><a id="deleteBtn" style="text-decoration: none; color: inherit;" data-toggle="modal" data-target="#deleteModal" >Delete</a></button>
+                        </div>
+
+                        <small class="text-body-secondary" th:text="'pages count  : ' + ${book.pages}">400 pages</small>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="modal-footer d-flex justify-content-center">
+                        <a type="button" th:href="@{/book/{id}/cart(id=${book.id})}"  class="btn btn-info" id="addToCart" name="addToCart"><i class="bi bi-cart2"> Add To Cart</i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">DELETE</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Do you want to delete this?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+                            <a th:href="@{/book/{id}/delete(id=${book.id})}"><button type="button"  class="btn btn-primary">YES</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+
+    <!--CAROUSEL-->
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop" class="d-block w-100" alt="...">
+
+            </div>
+            <div class="carousel-item">
+                <img src="https://static01.nyt.com/images/2023/03/23/multimedia/23bookbans-mfvl/23bookbans-mfvl-videoSixteenByNine3000.jpg" class="d-block w-100" alt="...">
+
+            </div>
+            <div class="carousel-item">
+                <img src="https://foodtank.com/wp-content/uploads/2021/07/alfons-morales-YLSwjSy7stw-unsplash.jpg" class="d-block w-100" alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+        <!--SCROLLER-->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-label="Slide 1" aria-current="true"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2" class=""></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+    </div>
+
+    <!--BADGES-->
+    <div class="d-flex gap-2 justify-content-center py-5">
+        <span class="badge text-bg-primary rounded-pill">EXPLORE</span>
+        <span class="badge text-bg-secondary rounded-pill">SEARCH</span>
+        <span class="badge text-bg-success rounded-pill">MULTIPLEBOX</span>
+        <span class="badge text-bg-danger rounded-pill">TELEGRAPH</span>
+    </div>
+
+    <!-- card -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 my-4 mx-4" style="margin-bottom: 30px;">
+        <div class="col" th:each="bookR : ${booksRec}">
+            <div class="card h-100">
+                <span class="badge rounded-pill bg-success position-absolute top-0 start-100 translate-middle" style="z-index: 1;">New</span>
+                <img th:src="@{${bookR.image}}" width="25" height="300" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${bookR.title}">Comic World</h5>
+                    <p class="card-text" th:text="${bookR.description.length() > 100 ? #strings.substring(bookR.description, 0, 100) + '...' : bookR.description}"></p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary">Latest Updates available</small>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <br>
+    <!-- Modal Structure -->
+    <div class="modal fade" id="detailBook" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailBookLabel">Book Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img id="detailBookImage" class="img-fluid mb-3" alt="Book Image" style="height: auto; width: 70%;">
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h4 id="detailBookTitle"></h4>
+                        <p class="text-muted" id="detailBookIsbn"></p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <p id="detailBookCategory"></p>
+                        <p class="text-info" id="detailBookQuantity"></p>
+                    </div>
+                    <hr>
+                    <p id="detailBookDescription"></p>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted" id="detailBookPages"></small>
+                        <h6 class="text-danger" id="detailBookPrice"></h6>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div th:replace="~{layout :: footer}"></div>
+    <script>
+        function showBookDetails(button) {
+            const bookId = button.getAttribute('data-id');
+            const bookImage = button.getAttribute('data-image');
+            const bookTitle = button.getAttribute('data-title');
+            const bookDescription = button.getAttribute('data-description');
+            const bookPages = button.getAttribute('data-pages');
+            const bookPrice = button.getAttribute('data-price');
+            const bookISBN = button.getAttribute('data-isbn');
+            const bookCategory = button.getAttribute('data-category');
+            const bookQuantity = button.getAttribute('data-quantity');
+
+            document.getElementById('detailBookImage').src = bookImage;
+            document.getElementById('detailBookTitle').textContent = bookTitle;
+            document.getElementById('detailBookDescription').textContent = bookDescription;
+            document.getElementById('detailBookPages').textContent = "Pages count: " + bookPages;
+            document.getElementById('detailBookPrice').textContent = "Price : " + bookPrice + " MAD";
+            document.getElementById('detailBookIsbn').textContent = "ISBN : ( " + bookISBN + " )";
+            document.getElementById('detailBookCategory').textContent = "Category : " + bookCategory;
+            document.getElementById('detailBookQuantity').textContent = "Quantity : " + bookQuantity;
+        }
+
+            $( document ).on( "click", "#delete", function() {
+                $('#deleteModal').modal('hide');
+            });
+
+        setTimeout(function() {
+            const alertElement = document.getElementById('welcomeAlert');
+            if (alertElement) {
+                alertElement.classList.add('fade'); // Adds fade-out transition
+                setTimeout(() => {
+                    alertElement.classList.add('d-none'); // Hides alert completely after fade
+                }, 500); // Delay to match fade transition
+            }
+        }, 3000);
+
+
+    </script>
+</body>
+</html>

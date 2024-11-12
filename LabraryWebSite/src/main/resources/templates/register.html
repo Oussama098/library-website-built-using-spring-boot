@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- Section: Design Block -->
+    <section class="text-center">
+        <!-- Background image -->
+        <div class="p-5 bg-image" style="
+            background-image: url('https://mdbootstrap.com/img/new/textures/full/171.jpg');
+            height: 300px;
+            "></div>
+        <!-- Background image -->
+
+        <div class="card mx-4 mx-md-5 shadow-5-strong bg-body-tertiary" style="
+            margin-top: -100px;
+            backdrop-filter: blur(30px);
+            ">
+            <div class="card-body py-5 px-md-5">
+
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="fw-bold mb-5">Sign up now</h2>
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Invalid username , Email or password
+                        </div>
+                        <form method="post" th:action="@{/register/save}" role="form" th:object="${user}">
+                            <!-- 2 column grid layout with text inputs for the first and last names -->
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div  class="form-outline">
+                                        <label class="form-label" for="username">Username</label>
+                                        <input type="text" id="username" th:field="*{username}" class="form-control" />
+                                        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div data-mdb-input-init class="form-outline">
+                                        <label class="form-label" for="email" >Email</label>
+                                        <input type="email" id="email" th:field="*{email}" class="form-control" />
+                                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email input -->
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="password" >Password</label>
+                                <input type="password" id="password" th:field="*{password}" class="form-control" />
+                                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></div>
+                            </div>
+
+
+                            <!-- Submit button -->
+                            <button type="submit"  class="btn btn-primary btn-block mb-4">
+                                Sign up
+                            </button>
+
+                            <!-- Register buttons -->
+                            <div class="text-center">
+                                <p>or sign up with:</p>
+                                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                                    <i class="bi bi-facebook"></i>
+                                </button>
+
+                                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                                    <i class="bi bi-google"></i>
+                                </button>
+
+                                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                                    <i class="bi bi-twitter"></i>
+                                </button>
+
+                                <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                                    <i class="bi bi-github"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section: Design Block -->
+<div th:replace="~{layout :: footer}"></div>
+</body>
+</html>

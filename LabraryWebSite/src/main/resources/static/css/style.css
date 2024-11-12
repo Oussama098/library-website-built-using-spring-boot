@@ -1,0 +1,32 @@
+*
+{
+  margin:0;
+  padding:0;
+}
+
+img{
+  height:300px;
+  width: 25px;
+}
+.badge {
+  font-size: 0.8rem; /* Adjust size */
+  padding: 0.4rem 0.6rem; /* Adjust padding */
+  border-radius: 0.25rem; /* Adjust border radius */
+}
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.quantity-control button {
+  padding: 0.25rem 0.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.quantity-input {
+  width: 50px;
+  text-align: center;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
