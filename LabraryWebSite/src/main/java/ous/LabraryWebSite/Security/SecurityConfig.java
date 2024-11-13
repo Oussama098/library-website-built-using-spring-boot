@@ -1,5 +1,6 @@
 package ous.LabraryWebSite.Security;
 
+import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,7 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ous.LabraryWebSite.Component.OAuth2LoginSuccessHandler;
 import ous.LabraryWebSite.Component.SessionInvalidationFilter;
@@ -29,9 +29,11 @@ public class SecurityConfig {
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, SessionInvalidationFilter loginPageSessionInvalidationFilter) throws Exception {
         http
+                .addFilterBefore(loginPageSessionInvalidationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize-> authorize
                         .requestMatchers("/login" ,"/register","/register/save", "/book" , "/css/**" , "/js/**")
                         .permitAll()
@@ -40,7 +42,6 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
-                .addFilterBefore(new SessionInvalidationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login") // Custom login page
                         .successHandler(loginSuccessHandler)
@@ -57,8 +58,6 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .invalidateHttpSession(true) // Invalidate the session
-                        .clearAuthentication(true)
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
                 );
